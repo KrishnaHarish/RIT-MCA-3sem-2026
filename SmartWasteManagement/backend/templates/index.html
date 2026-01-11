@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Waste Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>AI Smart Bin</h1>
+            <p class="subtitle">Real-time Fill Monitoring & Prediction System</p>
+        </header>
+
+        <main>
+            <div class="card status-card">
+                <h2>Current Status</h2>
+                
+                <div class="gauge-container">
+                    <div class="gauge">
+                        <div class="gauge-body">
+                            <div class="gauge-fill" id="gauge-fill"></div>
+                            <div class="gauge-cover" id="gauge-text">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="status-msg">Bin is <span id="status-text">Empty</span></p>
+            </div>
+
+            <div class="card prediction-card">
+                <h2>AI Prediction 🤖</h2>
+                <div class="pred-content">
+                    <p>Time to Full:</p>
+                    <h3 id="prediction-text">Analysis Pending...</h3>
+                    <p class="small">Based on Linear Regression of fill rate.</p>
+                </div>
+            </div>
+            
+            <div class="last-updated">
+                Last Updated: <span id="update-time">--</span>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
