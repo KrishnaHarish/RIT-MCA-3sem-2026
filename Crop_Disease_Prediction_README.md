@@ -554,11 +554,11 @@ We welcome contributions from the community! Please follow these steps:
 ### Project Team
 
 **Student Developer:**
-- [Student Name] - [USN]
-- Email: [student.email@rit.edu]
+- [STUDENT_NAME] - [UNIVERSITY_SEAT_NUMBER]
+- Email: [STUDENT_EMAIL]
 
 **Project Guide:**
-- [Guide Name] - [Designation]
+- [GUIDE_NAME] - [GUIDE_DESIGNATION]
 - Department of MCA
 - Ramaiah Institute of Technology, Bangalore
 
@@ -590,7 +590,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For queries and support:
 
-- **Email**: [project.email@rit.edu]
+- **Email**: [PROJECT_EMAIL]
 - **GitHub Issues**: [Project Issues](https://github.com/KrishnaHarish/RIT-MCA-3sem-2026/issues)
 - **Project Website**: [Coming Soon]
 

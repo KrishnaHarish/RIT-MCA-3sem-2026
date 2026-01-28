@@ -5,8 +5,8 @@
 ---
 
 ### Submitted by:
-**[Your Name]**  
-**USN: [Your University Seat Number]**  
+**[STUDENT_NAME]**  
+**USN: [UNIVERSITY_SEAT_NUMBER]**  
 **MCA Department**  
 **Ramaiah Institute of Technology, Bangalore**
 
@@ -679,11 +679,11 @@ This project aligns with the government's Digital India initiative and contribut
 ## GUIDE DETAILS
 
 **Project Guide:**  
-[Guide Name]  
-[Designation]  
+[GUIDE_NAME]  
+[GUIDE_DESIGNATION]  
 Department of MCA  
 Ramaiah Institute of Technology, Bangalore  
-Email: [guide.email@rit.edu]
+Email: [GUIDE_EMAIL]
 
 **Internal Guide Signature:** _______________
 
@@ -693,12 +693,12 @@ Email: [guide.email@rit.edu]
 
 ## STUDENT DETAILS
 
-**Name:** [Student Name]  
-**USN:** [University Seat Number]  
+**Name:** [STUDENT_NAME]  
+**USN:** [UNIVERSITY_SEAT_NUMBER]  
 **Semester:** 3rd Semester  
 **Program:** Master of Computer Applications (MCA)  
-**Email:** [student.email@rit.edu]  
-**Phone:** [Contact Number]
+**Email:** [STUDENT_EMAIL]  
+**Phone:** [CONTACT_NUMBER]
 
 **Student Signature:** _______________
 
