@@ -1,0 +1,205 @@
+# @title 1. Install Dependencies (Run First)
+!pip install -q gensim spacy torch transformers diffusers gtts pillow accelerate scipy
+!python -m spacy download en_core_web_md
+print("✅ Libraries installed successfully.")
+
+
+
+# @title 2. Run Embeddings Tasks (GloVe, spaCy, FastText)
+import gensim.downloader as api
+import spacy
+from gensim.models import FastText
+import numpy as np
+
+# --- Load Models ---
+print("⏳ Loading GloVe model (approx 1 min)...")
+glove = api.load("glove-wiki-gigaword-50")
+nlp = spacy.load("en_core_web_md")
+print("✅ Models Loaded.")
+
+# ---------------------------------------------------------
+# TASK 1: Skill Relationships (GloVe)
+# ---------------------------------------------------------
+print("\n--- TASK 1: Skill Relationships ---")
+skill = "python"
+# 1. Top 5 Similar Skills
+if skill in glove:
+    sims = glove.most_similar(skill, topn=5)
+    print(f"Skills similar to '{skill}': {sims}")
+
+    # 2. Odd one out
+    candidates = ["python", "java", "c", "html", "ruby"] # used 'c' as c++ often tokenized differently
+    candidates_clean = [w for w in candidates if w in glove]
+    odd = glove.doesnt_match(candidates_clean)
+    print(f"Odd one out in {candidates}: {odd}")
+else:
+    print(f"Skill {skill} not in vocabulary.")
+
+# ---------------------------------------------------------
+# TASK 2: Headline Similarity (spaCy)
+# ---------------------------------------------------------
+print("\n--- TASK 2: Headline Similarity ---")
+h1 = "Stocks crash as inflation rises"
+h2 = "Market falls due to high prices"
+doc1 = nlp(h1)
+doc2 = nlp(h2)
+print(f"Headline 1: {h1}\nHeadline 2: {h2}\nSimilarity Score: {doc1.similarity(doc2):.4f}")
+
+# Keyword similarity
+w1, w2 = nlp("economy")[0], nlp("finance")[0]
+print(f"Similarity between 'economy' and 'finance': {w1.similarity(w2):.4f}")
+
+# ---------------------------------------------------------
+# TASK 3: Misspelled Words (FastText)
+# ---------------------------------------------------------
+print("\n--- TASK 3: FastText for Misspellings ---")
+# Training a small FastText model on dummy data
+sentences = [["great", "product", "fast", "delivery"],
+             ["bad", "service", "slow", "shipping"],
+             ["excellent", "quality", "recommended"]]
+ft_model = FastText(sentences, vector_size=10, window=3, min_count=1, epochs=10)
+
+misspelled = "prodct" # Missing 'u'
+# FastText generates vectors for unseen words using n-grams
+if misspelled in ft_model.wv:
+    print(f"Vector found for '{misspelled}'? Yes")
+    print(f"Most similar to '{misspelled}': {ft_model.wv.most_similar(misspelled, topn=3)}")
+else:
+    # Fallback if n-grams fail (rare in full models)
+    print(f"Could not generate vector for {misspelled}")
+
+# ---------------------------------------------------------
+# TASK 4: Analogies (GloVe)
+# ---------------------------------------------------------
+print("\n--- TASK 4: Analogies ---")
+# Doctor : Hospital :: Teacher : ?
+# Vector math: Teacher + (Hospital - Doctor)
+try:
+    analogy = glove.most_similar(positive=['teacher', 'hospital'], negative=['doctor'], topn=1)
+    print(f"Doctor is to Hospital as Teacher is to: {analogy[0][0].upper()}")
+except Exception as e:
+    print("Analogy error:", e)
+
+
+
+# @title 3. Run Text Generation & Analysis (GPT-2, BERT)
+from transformers import pipeline, set_seed
+
+# --- Load Pipelines ---
+print("⏳ Loading Transformers Pipelines...")
+generator = pipeline('text-generation', model='gpt2')
+sentiment_task = pipeline("sentiment-analysis")
+summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+set_seed(42)
+print("✅ Pipelines Loaded.")
+
+# ---------------------------------------------------------
+# TASK 5 & 11: Content Generation
+# ---------------------------------------------------------
+print("\n--- TASK 5: Generate Content ---")
+# 1. Exam Notification
+prompt_exam = "NOTICE: The university final semester exams will commence on"
+exam_notif = generator(prompt_exam, max_length=50, num_return_sequences=1)
+print(f"Generated Notification:\n{exam_notif[0]['generated_text']}\n")
+
+# 2. Inspirational Message
+prompt_story = "To all final year students, remember that success is"
+story = generator(prompt_story, max_length=60, num_return_sequences=1)
+print(f"Inspirational Message:\n{story[0]['generated_text']}")
+
+# ---------------------------------------------------------
+# TASK 8 & 12: Sentiment & Feedback
+# ---------------------------------------------------------
+print("\n--- TASK 8 & 12: Feedback Analysis ---")
+feedback = "The course content was excellent and the labs were helpful, but the duration was too short."
+# 1. Sentiment
+result = sentiment_task(feedback)[0]
+print(f"Feedback: '{feedback}'")
+print(f"Sentiment: {result['label']} (Score: {result['score']:.4f})")
+
+# 2. Summary
+long_text = """
+Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to the natural intelligence
+displayed by animals including humans. AI research has been defined as the field of study of intelligent agents,
+which refers to any system that perceives its environment and takes actions that maximize its chance of achieving its goals.
+"""
+summary = summarizer(long_text, max_length=40, min_length=10, do_sample=False)
+print(f"\nSummary of academic text:\n{summary[0]['summary_text']}")
+
+# ---------------------------------------------------------
+# TASK 13: Code Generation (Simulated with GPT-2)
+# ---------------------------------------------------------
+# Note: For real code gen, use models like 'codegen' or 'copilot'. GPT-2 is weak at code.
+print("\n--- TASK 13: Code Generation Example ---")
+code_prompt = "def calculate_average(numbers):"
+code_gen = generator(code_prompt, max_length=50)[0]['generated_text']
+print(f"Generated Code Snippet:\n{code_gen}")
+
+
+
+# @title 4. Run Multimodal Tasks (Audio, Image, Video)
+import torch
+from gtts import gTTS
+from IPython.display import Audio, display
+from transformers import BlipProcessor, BlipForConditionalGeneration
+from diffusers import StableDiffusionPipeline
+from PIL import Image
+import requests
+from io import BytesIO
+
+# ---------------------------------------------------------
+# TASK 7 & 10: Text to Audio (gTTS)
+# ---------------------------------------------------------
+print("\n--- TASK 7: Text to Audio ---")
+text = "Welcome to the AI content assistant system."
+tts = gTTS(text, lang='en')
+tts.save('output.mp3')
+print("Audio generated: 'output.mp3'")
+display(Audio('output.mp3', autoplay=False))
+
+# ---------------------------------------------------------
+# TASK 6, 9, 10: Image Captioning (BLIP)
+# ---------------------------------------------------------
+print("\n--- TASK 6: Image Captioning ---")
+# Load Model
+processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda")
+
+# Download sample image
+img_url = "https://storage.googleapis.com/sfr-vision-language-research/BLIP/demo.jpg"
+raw_image = Image.open(requests.get(img_url, stream=True).raw).convert('RGB')
+display(raw_image.resize((300, 200))) # Show image
+
+# Generate Caption
+inputs = processor(raw_image, return_tensors="pt").to("cuda")
+out = model.generate(**inputs)
+caption = processor.decode(out[0], skip_special_tokens=True)
+print(f"Generated Caption: {caption}")
+
+# ---------------------------------------------------------
+# TASK 14: Text-to-Image (Stable Diffusion)
+# ---------------------------------------------------------
+print("\n--- TASK 14: Text to Image ---")
+# Load Pipeline (Requires GPU)
+pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16)
+pipe = pipe.to("cuda")
+
+prompt = "Futuristic city with flying cars at sunset, cyberpunk style"
+image = pipe(prompt).images[0]
+print(f"Prompt: {prompt}")
+display(image)
+
+# ---------------------------------------------------------
+# TASK 15: Video Generation (Runway ML Placeholder)
+# ---------------------------------------------------------
+print("\n--- TASK 15: Video Generation (Note) ---")
+print("Runway ML requires a paid API key. For this Colab, we use ModelScope (Open Source) for text-to-video if you wish to implement it.")
+print("To use ModelScope (Text-to-Video), uncomment the lines below (WARNING: Uses high VRAM):")
+
+# from diffusers import DiffusionPipeline, DPMSolverMultistepScheduler
+# from google.colab import files
+# pipe_video = DiffusionPipeline.from_pretrained("damo-vilab/text-to-video-ms-1.7b", torch_dtype=torch.float16, variant="fp16")
+# pipe_video.scheduler = DPMSolverMultistepScheduler.from_config(pipe_video.scheduler.config)
+# pipe_video.enable_model_cpu_offload()
+# video_frames = pipe_video("A robot dancing in a futuristic city", num_inference_steps=25).frames
+# print("Video frames generated.")
